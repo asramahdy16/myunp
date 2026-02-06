@@ -66,6 +66,7 @@ flutter:
     - lib/assets/images/error.png
     - lib/assets/images/mascot.png
     - lib/assets/images/welcome.png
+    - lib/assets/images/qr_profile.png
 
   #ICONS
     - lib/assets/icons/evaluasi.png
@@ -75,6 +76,7 @@ flutter:
     - lib/assets/icons/pengaduan.png
     - lib/assets/icons/presensi.png
     - lib/assets/icons/task_up.png
+    - lib/assets/icons/wifi_id.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

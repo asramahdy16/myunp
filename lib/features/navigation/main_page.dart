@@ -139,5 +139,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
-// --- CLASS DUMMY/PLACEHOLDER UNTUK NEWS (Hapus jika sudah punya file aslinya) ---

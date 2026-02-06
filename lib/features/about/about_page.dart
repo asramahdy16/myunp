@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dev_note_page.dart'; // <--- JANGAN LUPA IMPORT INI
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Definisi Warna (Sama dengan ProfilePage)
+    // Definisi Warna
     const Color primaryColor = Color(0xFF050542);
     const Color amberColor = Color(0xFFFFA726);
 
@@ -17,7 +18,7 @@ class AboutPage extends StatelessWidget {
             // --- BAGIAN ATAS (Header Biru) ---
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.only(bottom: 50), // Ruang untuk overlap kartu
+              padding: const EdgeInsets.only(bottom: 50),
               decoration: const BoxDecoration(
                 color: primaryColor,
                 borderRadius: BorderRadius.only(
@@ -30,7 +31,7 @@ class AboutPage extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
                   child: Column(
                     children: [
-                      // 1. Custom AppBar (Tombol Back & Judul)
+                      // 1. Custom AppBar
                       Row(
                         children: [
                           Container(
@@ -54,21 +55,21 @@ class AboutPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 40), // Dummy spacing agar judul di tengah
+                          const SizedBox(width: 40),
                         ],
                       ),
                       
                       const SizedBox(height: 30),
 
-                      // 2. Logo UNP (Di dalam lingkaran putih)
+                      // 2. Logo UNP (UPDATED)
                       Container(
                         width: 110,
                         height: 110,
-                        padding: const EdgeInsets.all(16),
+                        // Padding dihapus agar gambar full
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          border: Border.all(color: amberColor, width: 3), // Aksen border amber
+                          // Border dihapus
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
@@ -77,17 +78,20 @@ class AboutPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Image.asset(
-                          'lib/assets/images/logo_unp.png',
-                          fit: BoxFit.contain,
+                        // ClipOval memastikan gambar dipotong lingkaran
+                        child: ClipOval(
+                          child: Image.asset(
+                            'lib/assets/images/logo_unp.png',
+                            fit: BoxFit.cover, // Memenuhi container
+                          ),
                         ),
                       ),
                       
                       const SizedBox(height: 20),
                       
-                      // 3. Teks Copyright & Versi (Warna Putih/Terang)
+                      // 3. Teks Info
                       const Text(
-                        "©️ DTI UNP 2026",
+                        "©️ UPT. DTI UNP 2026",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -106,7 +110,7 @@ class AboutPage extends StatelessWidget {
                           "Version 2.0.1-beta",
                           style: TextStyle(
                             fontSize: 12,
-                            color: amberColor, // Warna Amber agar kontras
+                            color: amberColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -120,7 +124,7 @@ class AboutPage extends StatelessWidget {
 
             // --- BAGIAN BAWAH (Kartu Putih Overlap) ---
             Transform.translate(
-              offset: const Offset(0, -40), // Menarik kartu ke atas agar menumpuk header
+              offset: const Offset(0, -40),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Container(
@@ -139,11 +143,18 @@ class AboutPage extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
+                      // Tombol Developer Note
                       _buildMenuItem(
                         icon: Icons.note_alt_outlined,
                         text: "Developer Note",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const DevNotePage()),
+                          );
+                        },
                       ),
+                      
                       _buildMenuItem(
                         icon: Icons.help_outline_rounded,
                         text: "Help & Contact",
@@ -168,8 +179,8 @@ class AboutPage extends StatelessWidget {
                               );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFFEBEE), // Merah pudar
-                            foregroundColor: Colors.red, // Teks Merah
+                            backgroundColor: const Color(0xFFFFEBEE),
+                            foregroundColor: Colors.red,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -197,7 +208,6 @@ class AboutPage extends StatelessWidget {
               ),
             ),
             
-            // Padding bawah extra agar tidak terpotong di layar kecil
             const SizedBox(height: 20),
           ],
         ),

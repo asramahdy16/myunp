@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../web/web_page.dart';
 
-// Import halaman berita untuk Model Data dan Halaman Detail
-import '../news/news_page.dart'; 
+// Import halaman berita, detail berita, KRS, dan Wifi
+import '../news/news_page.dart';
 import '../news/news_view_page.dart';
+import '../krs/krs_page.dart';
+import '../wifi/wifi_page.dart'; 
+import '../transkrip/transkrip_page.dart';
 
 // --- 1. CONFIGURATION: PUSAT PENGATURAN WARNA ---
 class AppColors {
@@ -35,46 +38,95 @@ class MenuData {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  // --- Data Source Menu ---
-  List<MenuData> get _academicMenus => [
-    MenuData(title: 'Evaluasi', assetName: 'lib/assets/icons/evaluasi.png'),
-    MenuData(title: 'Foto Wisuda', assetName: 'lib/assets/icons/foto_wisuda.png'),
-    MenuData(title: 'KRS Online', assetName: 'lib/assets/icons/krs.png'),
-    MenuData(title: 'Presensi', assetName: 'lib/assets/icons/presensi.png'),
-    MenuData(title: 'TaskUp', assetName: 'lib/assets/icons/task_up.png'),
-    MenuData(title: 'Transkrip', assetName: 'lib/assets/icons/historis.png'),
-  ];
+  // --- Data Source Menu (Method) ---
+  List<MenuData> _getAcademicMenus(BuildContext context) => [
+        MenuData(title: 'Evaluasi', assetName: 'lib/assets/icons/evaluasi.png'),
+        MenuData(
+            title: 'Foto Wisuda',
+            assetName: 'lib/assets/icons/foto_wisuda.png'),
+        
+        // --- MENU KRS ---
+        MenuData(
+          title: 'KRS Online', 
+          assetName: 'lib/assets/icons/krs.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const KrsPage()),
+            );
+          }
+        ),
+
+        MenuData(title: 'Presensi', assetName: 'lib/assets/icons/presensi.png'),
+        
+        // --- MENU WIFI ID (UPDATED) ---
+        MenuData(
+            title: 'Password @wifi.id', 
+            assetName: 'lib/assets/icons/wifi_id.png',
+            onTap: () {
+              // Navigasi ke Halaman Wifi Page
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WifiPage()),
+              );
+            }
+        ),
+        // ------------------------------
+
+        // --- UPDATE TOMBOL TRANSKRIP DI SINI ---
+        MenuData(
+            title: 'Transkrip', 
+            assetName: 'lib/assets/icons/historis.png',
+            onTap: () {
+              // Navigasi ke Halaman Transkrip
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TranskripPage()),
+              );
+            }
+        ),
+        // ---------------------------------------
+      ];
 
   List<MenuData> get _websiteMenus => [
-    MenuData(title: 'Portal', assetName: 'lib/assets/images/logo_unp.png', url: 'https://portal.unp.ac.id/'),
-    MenuData(title: 'SMILE', assetName: 'lib/assets/images/logo_unp.png', url: 'https://smile.unp.ac.id/'),
-    MenuData(title: 'Rumah Gadang', assetName: 'lib/assets/images/logo_unp.png', url: 'https://rumah-gadang.unp.ac.id/'),
-  ];
+        MenuData(
+            title: 'Portal',
+            assetName: 'lib/assets/images/logo_unp.png',
+            url: 'https://portal.unp.ac.id/'),
+        MenuData(
+            title: 'SMILE',
+            assetName: 'lib/assets/images/logo_unp.png',
+            url: 'https://smile.unp.ac.id/'),
+        MenuData(
+            title: 'Rumah Gadang',
+            assetName: 'lib/assets/images/logo_unp.png',
+            url: 'https://rumah-gadang.unp.ac.id/'),
+      ];
 
   // --- Data Source Berita Terbaru (3 Item) ---
   List<NewsItem> get _latestNews => [
-    NewsItem(
-      title: 'Peluncuran Fitur Baru E-Office',
-      snippet: 'Sistem E-Office kini dilengkapi tanda tangan digital.',
-      date: '20 Jan',
-      views: 1240,
-      imageUrl: 'https://picsum.photos/id/1/300/200',
-    ),
-    NewsItem(
-      title: 'Workshop Flutter Tim IT',
-      snippet: 'Pelatihan intensif pengembangan aplikasi mobile.',
-      date: '15 Jan',
-      views: 2300,
-      imageUrl: 'https://picsum.photos/id/180/300/200',
-    ),
-    NewsItem(
-      title: 'Libur Nasional 2026',
-      snippet: 'Jadwal libur nasional dan cuti bersama.',
-      date: '10 Jan',
-      views: 5600,
-      imageUrl: 'https://picsum.photos/id/13/300/200',
-    ),
-  ];
+        NewsItem(
+          title: 'Peluncuran Fitur Baru E-Office',
+          snippet: 'Sistem E-Office kini dilengkapi tanda tangan digital.',
+          date: '20 Jan',
+          views: 1240,
+          imageUrl: 'https://picsum.photos/id/1/300/200',
+        ),
+        NewsItem(
+          title: 'Workshop Flutter Tim IT',
+          snippet: 'Pelatihan intensif pengembangan aplikasi mobile.',
+          date: '15 Jan',
+          views: 2300,
+          imageUrl: 'https://picsum.photos/id/180/300/200',
+        ),
+        NewsItem(
+          title: 'Libur Nasional 2026',
+          snippet: 'Jadwal libur nasional dan cuti bersama.',
+          date: '10 Jan',
+          views: 5600,
+          imageUrl: 'https://picsum.photos/id/13/300/200',
+        ),
+      ];
 
   // --- Helper Logic ---
   void _handleNavigation(BuildContext context, MenuData menu) {
@@ -92,11 +144,11 @@ class HomePage extends StatelessWidget {
 
   // --- UI Builders ---
 
-  // 1. WIDGET CARD BERITA (Baru)
+  // 1. WIDGET CARD BERITA
   Widget _buildNewsCard(BuildContext context, NewsItem news) {
     return Container(
-      width: 280, // Lebar fixed agar bisa discroll horizontal
-      margin: const EdgeInsets.only(right: 16, bottom: 10), // Margin antar kartu
+      width: 280, 
+      margin: const EdgeInsets.only(right: 16, bottom: 10),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
@@ -113,7 +165,6 @@ class HomePage extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () {
-            // Navigasi ke Detail Berita dengan Animasi Hero
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => NewsViewPage(news: news)),
@@ -122,34 +173,32 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Bagian Gambar dengan Hero Animation
               Hero(
-                tag: news.title, // Tag harus unik dan sama dengan di NewsViewPage
+                tag: news.title,
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
                   child: Image.network(
                     news.imageUrl,
                     height: 140,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     errorBuilder: (ctx, err, stack) => Container(
-                      height: 140, 
+                      height: 140,
                       color: Colors.grey[300],
                       child: const Icon(Icons.broken_image, color: Colors.grey),
                     ),
                   ),
                 ),
               ),
-              
-              // Bagian Teks
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Kategori Kecil
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
@@ -157,14 +206,12 @@ class HomePage extends StatelessWidget {
                       child: const Text(
                         'Info Terbaru',
                         style: TextStyle(
-                          fontSize: 10, 
-                          color: AppColors.primary, 
-                          fontWeight: FontWeight.bold
-                        ),
+                            fontSize: 10,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Judul
                     Text(
                       news.title,
                       maxLines: 2,
@@ -177,21 +224,24 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Tanggal & Views
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_rounded, size: 12, color: Colors.grey[500]),
+                        Icon(Icons.calendar_today_rounded,
+                            size: 12, color: Colors.grey[500]),
                         const SizedBox(width: 4),
                         Text(
                           news.date,
-                          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                          style:
+                              TextStyle(fontSize: 11, color: Colors.grey[600]),
                         ),
                         const Spacer(),
-                        Icon(Icons.visibility_rounded, size: 12, color: Colors.grey[500]),
+                        Icon(Icons.visibility_rounded,
+                            size: 12, color: Colors.grey[500]),
                         const SizedBox(width: 4),
                         Text(
                           '${news.views}',
-                          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                          style:
+                              TextStyle(fontSize: 11, color: Colors.grey[600]),
                         ),
                       ],
                     )
@@ -205,12 +255,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 2. WIDGET SECTION BERITA (Baru)
+  // 2. WIDGET SECTION BERITA
   Widget _buildLatestNewsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Section
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
@@ -224,8 +273,6 @@ class HomePage extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              // Tombol Lihat Semua bisa diarahkan ke tab News (Index 1 di MainPage)
-              // Untuk saat ini kita biarkan teks saja
               Text(
                 'Update Hari Ini',
                 style: TextStyle(
@@ -238,10 +285,8 @@ class HomePage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        
-        // Horizontal Scroll View
         SizedBox(
-          height: 270, // Tinggi area scroll
+          height: 270,
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             scrollDirection: Axis.horizontal,
@@ -302,7 +347,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuSection(BuildContext context, String title, List<MenuData> menus) {
+  Widget _buildMenuSection(
+      BuildContext context, String title, List<MenuData> menus) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -379,7 +425,8 @@ class HomePage extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 20, top: 12, bottom: 12, right: 8),
+                    padding: const EdgeInsets.only(
+                        left: 20, top: 12, bottom: 12, right: 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -408,14 +455,16 @@ class HomePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: AppColors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Text(
                             "Cek Berita >",
-                            style: TextStyle(color: AppColors.white, fontSize: 10),
+                            style:
+                                TextStyle(color: AppColors.white, fontSize: 10),
                           ),
                         )
                       ],
@@ -518,7 +567,8 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey[400]),
+                Icon(Icons.arrow_forward_ios_rounded,
+                    size: 16, color: Colors.grey[400]),
               ],
             ),
           ),
@@ -543,14 +593,14 @@ class HomePage extends StatelessWidget {
               children: [
                 const SizedBox(height: 10),
                 _buildMascotBanner(),
-                
-                // --- INSERTED NEWS SECTION HERE ---
+
                 const SizedBox(height: 25),
-                _buildLatestNewsSection(context), // Menampilkan Berita
-                // ----------------------------------
-                
+                _buildLatestNewsSection(context),
+
                 const SizedBox(height: 25),
-                _buildMenuSection(context, 'Layanan Akademik', _academicMenus),
+                // Panggil Menu Akademik dengan Context
+                _buildMenuSection(context, 'Layanan Akademik', _getAcademicMenus(context)),
+                
                 const SizedBox(height: 30),
                 _buildMenuSection(context, 'Website Kampus', _websiteMenus),
                 const SizedBox(height: 30),
@@ -565,7 +615,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// --- DELEGATE HEADER (Tidak Berubah) ---
+// --- DELEGATE HEADER (Tetap Sama) ---
 class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight;
   final double maxHeight;
@@ -573,10 +623,14 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   HomeHeaderDelegate({required this.minHeight, required this.maxHeight});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final double shrinkPercentage = min(1, shrinkOffset / (maxHeight - minHeight));
-    final double logoSize = (50 * (1 - shrinkPercentage)) + (36 * shrinkPercentage);
-    final double nameFontSize = (18 * (1 - shrinkPercentage)) + (16 * shrinkPercentage);
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final double shrinkPercentage =
+        min(1, shrinkOffset / (maxHeight - minHeight));
+    final double logoSize =
+        (50 * (1 - shrinkPercentage)) + (36 * shrinkPercentage);
+    final double nameFontSize =
+        (18 * (1 - shrinkPercentage)) + (16 * shrinkPercentage);
     final double fadeOpacity = (1 - (shrinkPercentage * 2)).clamp(0.0, 1.0);
 
     return Container(
@@ -584,7 +638,8 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
           color: AppColors.primary,
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
           boxShadow: [
-            BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
+            BoxShadow(
+                color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
           ]),
       child: SafeArea(
         bottom: false,
@@ -604,7 +659,8 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                 ),
                 padding: const EdgeInsets.all(2),
                 child: ClipOval(
-                  child: Image.asset('lib/assets/images/logo_unp.png', fit: BoxFit.cover),
+                  child: Image.asset('lib/assets/images/logo_unp.png',
+                      fit: BoxFit.cover),
                 ),
               ),
               const SizedBox(width: 16),

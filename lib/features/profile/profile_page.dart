@@ -4,6 +4,93 @@ import '../about/about_page.dart';
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
+  // --- FUNGSI MENAMPILKAN DIALOG QR ---
+  void _showQrDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // Bisa ditutup dengan tap di luar
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: Container(
+            width: 320,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "QR Code Saya",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF050542),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Scan untuk melihat profil akademik",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                const SizedBox(height: 24),
+                
+                // --- CONTAINER GAMBAR QR ---
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey.shade200, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  // Ganti 'lib/assets/images/logo_unp.png' dengan path gambar QR Anda
+                  // Misalnya: 'lib/assets/images/my_qr_code.png'
+                  child: Image.asset(
+                    'lib/assets/images/qr_profile.png', 
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                
+                const SizedBox(height: 30),
+                
+                // Tombol Tutup
+                SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF050542),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text("Tutup"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const Color primaryColor = Color(0xFF050542);
@@ -35,11 +122,13 @@ class ProfilePage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // --- UPDATE 1: Tombol QR Code Berfungsi ---
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () => _showQrDialog(context),
                             icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 28),
                           ),
-                          // --- UPDATE DISINI: Tombol ke Halaman About ---
+                          
+                          // Tombol ke Halaman About
                           IconButton(
                             onPressed: () {
                               Navigator.push(
