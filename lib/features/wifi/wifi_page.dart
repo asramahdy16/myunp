@@ -340,23 +340,23 @@ class _WifiPageState extends State<WifiPage> {
     );
   }
 
-  Widget _buildTipItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("• ", style: TextStyle(color: Colors.blueGrey)),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 13, color: Colors.blueGrey),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildTipItem(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 4),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const Text("• ", style: TextStyle(color: Colors.blueGrey)),
+  //         Expanded(
+  //           child: Text(
+  //             text,
+  //             style: const TextStyle(fontSize: 13, color: Colors.blueGrey),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildModernInput({
     required TextEditingController controller,

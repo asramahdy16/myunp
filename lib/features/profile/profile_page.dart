@@ -8,7 +8,7 @@ class ProfilePage extends StatelessWidget {
   void _showQrDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: true, // Bisa ditutup dengan tap di luar
+      barrierDismissible: true,
       builder: (context) {
         return Dialog(
           backgroundColor: Colors.transparent,
@@ -38,8 +38,6 @@ class ProfilePage extends StatelessWidget {
                   style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
                 const SizedBox(height: 24),
-                
-                // --- CONTAINER GAMBAR QR ---
                 Container(
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
@@ -54,19 +52,14 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Ganti 'lib/assets/images/logo_unp.png' dengan path gambar QR Anda
-                  // Misalnya: 'lib/assets/images/my_qr_code.png'
                   child: Image.asset(
-                    'lib/assets/images/qr_profile.png', 
+                    'lib/assets/images/qr_profile.png',
                     width: 200,
                     height: 200,
                     fit: BoxFit.contain,
                   ),
                 ),
-                
                 const SizedBox(height: 30),
-                
-                // Tombol Tutup
                 SizedBox(
                   width: double.infinity,
                   height: 45,
@@ -93,7 +86,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF050542);
+    // Definisi Warna
     const Color amberColor = Color(0xFFFFA726);
     const Color textDarkColor = Color(0xFF050542);
 
@@ -102,115 +95,167 @@ class ProfilePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // --- BAGIAN ATAS (Background Biru) ---
+            // --- BAGIAN ATAS (Header Gradient Modern) ---
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(bottom: 30),
+              // Clip.hardEdge memastikan ornamen lingkaran tidak keluar dari border radius
+              clipBehavior: Clip.hardEdge, 
               decoration: const BoxDecoration(
-                color: primaryColor,
+                // 1. UPDATE: Menggunakan Gradient dari halaman Wifi
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF050542),
+                    Color(0xFF0A0F6C), // Sedikit lebih terang di ujung
+                  ],
+                ),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(40),
                   bottomRight: Radius.circular(40),
                 ),
               ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-                  child: Column(
-                    children: [
-                      // Header Icon
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
+                children: [
+                  // 2. UPDATE: Dekorasi Lingkaran Abstrak (Background)
+                  Positioned(
+                    top: -50,
+                    right: -50,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.05),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 100,
+                    left: -30,
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: amberColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+
+                  // 3. KONTEN PROFILE (Foreground)
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
+                      child: Column(
                         children: [
-                          // --- UPDATE 1: Tombol QR Code Berfungsi ---
-                          IconButton(
-                            onPressed: () => _showQrDialog(context),
-                            icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 28),
+                          // Header Icon
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: () => _showQrDialog(context),
+                                icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 28),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AboutPage(),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.more_horiz, color: Colors.white, size: 28),
+                              ),
+                            ],
                           ),
-                          
-                          // Tombol ke Halaman About
-                          IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const AboutPage(),
+
+                          const SizedBox(height: 5),
+
+                          // Foto Profil
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              border: Border.all(color: Colors.white, width: 3),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
                                 ),
-                              );
-                            },
-                            icon: const Icon(Icons.more_horiz, color: Colors.white, size: 28),
+                              ],
+                              image: const DecorationImage(
+                                image: AssetImage('lib/assets/images/logo_unp.png'),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // Tombol Ganti Photo
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: amberColor,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                )
+                              ]
+                            ),
+                            child: const Text(
+                              "GANTI PHOTO",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Identitas
+                          const Text(
+                            "Asra Mahdy Hayun",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text(
+                            "22076030",
+                            style: TextStyle(
+                              color: amberColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            "Prodi Pendidikan Teknik Informatika",
+                            style: TextStyle(
+                              color: Colors.white70, // Sedikit transparan agar elegan
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 5),
-
-                      // Foto Profil
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          border: Border.all(color: Colors.white, width: 3),
-                          image: const DecorationImage(
-                            image: AssetImage('lib/assets/images/logo_unp.png'),
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Tombol Ganti Photo
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: amberColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Text(
-                          "GANTI PHOTO",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Identitas
-                      const Text(
-                        "Asra Mahdy Hayun",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        "22076030",
-                        style: TextStyle(
-                          color: amberColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        "Prodi Pendidikan Teknik Informatika",
-                        style: TextStyle(
-                          color: amberColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
 
@@ -227,7 +272,7 @@ class ProfilePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withOpacity(0.08),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -284,7 +329,14 @@ class ProfilePage extends StatelessWidget {
   }) {
     return Row(
       children: [
-        Icon(icon, color: textColor, size: 28),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: textColor.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: textColor, size: 24),
+        ),
         const SizedBox(width: 16),
         Text(
           title,
