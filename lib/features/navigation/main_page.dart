@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Pastikan import file page Anda ada di sini
+// Import file page Anda
 import '../home/home_page.dart';
 import '../news/news_page.dart';
 import '../eoffice/eoffice_page.dart';
@@ -17,122 +17,205 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
 
-  // 1. Menambahkan Halaman News ke dalam list
+  // Warna Tema
+  final Color primaryColor = const Color(0xFF050542);
+  final Color inactiveColor = Colors.grey.shade400;
+
+  // Daftar Halaman
   final List<Widget> _pages = const [
-    HomePage(),
-    NewsPage(), // Placeholder class ada di bawah kode ini
-    EOfficePage(),
-    AgendaPage(),
-    ProfilePage(),
+    HomePage(),      // Index 0
+    NewsPage(),      // Index 1
+    EOfficePage(),   // Index 2
+    AgendaPage(),    // Index 3
+    ProfilePage(),   // Index 4
   ];
 
-  // 2. Menambahkan Data Menu News (Posisi setelah Home)
-  final List<Map<String, dynamic>> _menuItems = [
-    {'icon': Icons.home_rounded, 'label': 'Home'},
-    {'icon': Icons.newspaper_rounded, 'label': 'News'}, // Menu Baru
-    {'icon': Icons.chat_bubble_rounded, 'label': 'E-Office'},
-    {'icon': Icons.calendar_month_rounded, 'label': 'Agenda'},
-    {'icon': Icons.person_rounded, 'label': 'Profile'},
-  ];
+  // Fungsi ganti halaman
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Membiarkan body memanjang ke belakang navbar
-      body: _pages[_currentIndex],
-
-      bottomNavigationBar: SafeArea(
+      // backgroundColor: Colors.grey[50], // Background dasar aplikasi
+      
+      // 1. ANIMATED BODY SWITCHER (Transisi Halaman Halus)
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeIn,
+        // Efek transisi: Fade + Sedikit Zoom/Slide
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
         child: Container(
-          // Mengurangi tinggi sedikit agar lebih proporsional
-          height: 70,
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30), // Lebih bulat
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF050542).withOpacity(0.15),
-                blurRadius: 25,
-                offset: const Offset(0, 10),
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(
-                _menuItems.length,
-                (index) => _buildAnimatedNavItem(index),
+          // Key penting agar AnimatedSwitcher tahu widget berubah
+          key: ValueKey<int>(_currentIndex), 
+          child: _pages[_currentIndex],
+        ),
+      ),
+
+      // 2. TOMBOL HOME (FAB) YANG LEBIH CANTIK
+      floatingActionButton: SizedBox(
+        height: 70, // Lebih besar
+        width: 70,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: () => _onItemTapped(0),
+            backgroundColor: _currentIndex == 0 ? primaryColor : Colors.white,
+            elevation: 8, // Shadow lebih dalam
+            // Mencegah perubahan warna default Material 3
+            // surfaceTintColor: _currentIndex == 0 ? primaryColor : Colors.white, 
+            shape: const CircleBorder(), 
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+              child: Icon(
+                Icons.home_rounded,
+                // Key agar icon ter-animate saat berubah warna
+                key: ValueKey<bool>(_currentIndex == 0), 
+                size: 30,
+                color: _currentIndex == 0 ? Colors.white : primaryColor,
               ),
             ),
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      // 3. BOTTOM NAV BAR
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 12.0, // Jarak notch lebih lebar agar elegan
+        color: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 20,
+        shadowColor: Colors.black.withOpacity(0.4), // Shadow lebih lembut
+        height: 75,
+        padding: EdgeInsets.zero,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            // KIRI
+            _NavBarItem(
+              icon: Icons.newspaper_rounded, 
+              label: "News", 
+              index: 1, 
+              currentIndex: _currentIndex, 
+              onTap: _onItemTapped,
+              primaryColor: primaryColor,
+            ),
+            _NavBarItem(
+              icon: Icons.chat_bubble_rounded, 
+              label: "E-Office", 
+              index: 2, 
+              currentIndex: _currentIndex, 
+              onTap: _onItemTapped,
+              primaryColor: primaryColor,
+            ),
+
+            // SPACER TENGAH (Untuk FAB)
+            const SizedBox(width: 60),
+
+            // KANAN
+            _NavBarItem(
+              icon: Icons.calendar_month_rounded, 
+              label: "Agenda", 
+              index: 3, 
+              currentIndex: _currentIndex, 
+              onTap: _onItemTapped,
+              primaryColor: primaryColor,
+            ),
+            _NavBarItem(
+              icon: Icons.person_rounded, 
+              label: "Profile", 
+              index: 4, 
+              currentIndex: _currentIndex, 
+              onTap: _onItemTapped,
+              primaryColor: primaryColor,
+            ),
+          ],
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildAnimatedNavItem(int index) {
-    final bool isSelected = _currentIndex == index;
-    
-    // Warna tema diambil dari kode Anda (Deep Blue)
-    const Color activeColor = Color(0xFF050542);
+// --- CUSTOM WIDGET UNTUK ICON NAVIGASI ---
+class _NavBarItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final int index;
+  final int currentIndex;
+  final Function(int) onTap;
+  final Color primaryColor;
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      child: AnimatedContainer(
-        // Durasi animasi diperhalus
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeOutQuart,
-        // Container melebar jika dipilih (responsive width)
-        padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 16 : 10, 
-          vertical: 10
-        ),
-        decoration: BoxDecoration(
-          // Jika dipilih: Background Biru Tua. Jika tidak: Transparan
-          color: isSelected ? activeColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
+  const _NavBarItem({
+    required this.icon,
+    required this.label,
+    required this.index,
+    required this.currentIndex,
+    required this.onTap,
+    required this.primaryColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isSelected = currentIndex == index;
+
+    return InkWell(
+      onTap: () => onTap(index),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon
-            Icon(
-              _menuItems[index]['icon'],
-              // Jika dipilih icon jadi putih, jika tidak abu-abu
-              color: isSelected ? Colors.white : Colors.grey.shade400,
-              size: 24,
-            ),
-            
-            // Teks Label dengan animasi lebar (Sliding Text)
-            AnimatedSize(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeOutQuart,
-              child: SizedBox(
-                width: isSelected ? null : 0, // Lebar 0 jika tidak dipilih
-                child: Padding(
-                  padding: isSelected 
-                      ? const EdgeInsets.only(left: 8) 
-                      : EdgeInsets.zero,
-                  child: Text(
-                    _menuItems[index]['label'],
-                    style: const TextStyle(
-                      color: Colors.white, // Teks putih agar kontras
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                  ),
-                ),
+            // Animasi Icon (Naik sedikit & Berubah Warna)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutBack, // Efek membal (bouncy)
+              transform: Matrix4.translationValues(0, isSelected ? -2 : 0, 0),
+              child: Icon(
+                icon,
+                color: isSelected ? primaryColor : Colors.grey.shade400,
+                size: 26,
               ),
             ),
+            
+            const SizedBox(height: 4),
+            
+            // Animasi Text Label
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: TextStyle(
+                color: isSelected ? primaryColor : Colors.grey.shade400,
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                fontFamily: 'Nunito', // Opsional jika punya font custom
+              ),
+              child: Text(label),
+            ),
+
+            // Indikator Titik (Dot) di bawah label jika aktif
+            const SizedBox(height: 2),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+              height: 4,
+              width: isSelected ? 4 : 0, // Membesar dari 0 ke 4
+              decoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+              ),
+            )
           ],
         ),
       ),

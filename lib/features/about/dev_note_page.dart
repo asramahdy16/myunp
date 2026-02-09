@@ -140,7 +140,7 @@ class _DevNotePageState extends State<DevNotePage> {
                   _buildSectionTitle("Tentang DTI"),
                   const SizedBox(height: 10),
                   const Text(
-                    "Unit Pelaksana Teknis Teknologi Informasi dan Komunikasi (UPT TIK) Universitas Negeri Padang, atau yang lebih dikenal dengan DTI, adalah unit yang bertanggung jawab dalam pengembangan, pengelolaan, dan pelayanan infrastruktur serta sistem informasi di lingkungan Universitas Negeri Padang.",
+                    "Merupakan Unit yang bertugas dalam melaksanakan, pengembangan, pengelolaan, dan pemberian layanan teknologi informasi dan komunikasi serta pengelolaan sistem informasi.",
                     textAlign: TextAlign.justify,
                     style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.5),
                   ),
@@ -159,7 +159,7 @@ class _DevNotePageState extends State<DevNotePage> {
                       border: Border.all(color: const Color(0xFF050542).withOpacity(0.1)),
                     ),
                     child: const Text(
-                      "\"Menjadi pusat layanan teknologi informasi yang unggul dan inovatif dalam mendukung penyelenggaraan Tridharma Perguruan Tinggi di Universitas Negeri Padang.\"",
+                      "\"Menyediakan data dan informasi yang relevan, akurat, terpercaya, aman, fleksibel dan tersedia setiap saat.\"",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -175,20 +175,23 @@ class _DevNotePageState extends State<DevNotePage> {
                   // MISI
                   _buildSectionTitle("Misi"),
                   const SizedBox(height: 10),
-                  _buildListItem("Mengembangkan infrastruktur jaringan dan pusat data yang handal dan aman."),
-                  _buildListItem("Membangun sistem informasi terintegrasi untuk efisiensi manajemen akademik."),
-                  _buildListItem("Meningkatkan kompetensi SDM dalam pemanfaatan teknologi informasi."),
-                  _buildListItem("Memberikan layanan prima di bidang TIK kepada sivitas akademika."),
+                  _buildListItem("Menyediakan aplikasi database sehingga memudahkan dalam memasukkan, mencari dan menyimpan data serta informasi."),
+                  _buildListItem("Menyediakan infrastruktur jaringan (LAN, WAN dan internet) sebagai tulang punggung aliran data."),
+                  _buildListItem("Memonitor dan mengevaluasi system kebutuhan pengguna, termasuk pemeliharaan dan perbaikan."),
+                  _buildListItem("Mengembangkan Teknologi Informasi berbasis pelayanan yang berkualitas, profesional dan transparansi untuk mendukung kemajuan universitas dalam persaingan global."),
+                  _buildListItem("Mengembangkan dan meningkatkan fasilitas terkait teknologi informasi sejalan dengan kebutuhan dan perkembangan teknologi."),
+                  _buildListItem("Menyediakan dan menjamin ketersediaan informasi/data bagi semua unit kerja berbasis jaringan."),
                   
                   // --- BAGIAN BARU: TUJUAN ---
                   const SizedBox(height: 30),
 
                   _buildSectionTitle("Tujuan"),
                   const SizedBox(height: 10),
-                  _buildListItem("Terwujudnya layanan TIK yang prima untuk mendukung kegiatan akademik dan administrasi."),
-                  _buildListItem("Terciptanya ekosistem digital kampus yang terintegrasi, aman, dan user-friendly."),
-                  _buildListItem("Meningkatnya kepuasan pengguna (mahasiswa, dosen, tendik) terhadap layanan TIK."),
-                  _buildListItem("Tersedianya data dan informasi yang akurat dan real-time untuk pengambilan keputusan pimpinan."),
+                  _buildListItem("Menyediakan data yang reliabel, terintegrasi, fleksibel dan aman."),
+                  _buildListItem("Menjadi pusat pengolahan data berbasis teknologi modern."),
+                  _buildListItem("Menjadi pusat pengembangan sumber daya manusia dalam bidang teknologi informasi."),
+                  _buildListItem("Memiliki manajemen dan organisasi yang solid dan sehat."),
+                  _buildListItem("Memiliki tenaga profesional bidang teknologi informasi yang mampu menganalisa dan mengembangkan teknologi informasi."),
 
                   const SizedBox(height: 40),
 
@@ -202,7 +205,7 @@ class _DevNotePageState extends State<DevNotePage> {
                         ),
                         const SizedBox(height: 4),
                         const Text(
-                          "helpdesk@unp.ac.id",
+                          "dti@unp.ac.id",
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: primaryColor),
                         ),
                       ],

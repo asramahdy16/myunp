@@ -27,7 +27,8 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   // Warna Tema
-  static const Color primaryColor = Color(0xFF050542);
+  final Color primaryColor = const Color(0xFF050542);
+  final Color accentColor = const Color(0xFFFFA726);
 
   // 2. Dummy Data Berita
   final List<NewsItem> _allNews = [
@@ -97,7 +98,8 @@ class _NewsPageState extends State<NewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[50], // Background body sedikit abu
+      extendBodyBehindAppBar: true, // Header menyatu dengan status bar
       appBar: AppBar(
         title: const Text(
           'E-News',
@@ -107,82 +109,135 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.transparent, // Transparan karena ada background gradient
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // --- Search Bar Section ---
+          // --- 1. HEADER GRADIENT BACKGROUND ---
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-            decoration: const BoxDecoration(
-              color: primaryColor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
+            height: 230, // Tinggi header background
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF050542),
+                  const Color(0xFF0A0F6C),
+                ],
               ),
-            ),
-            child: Column(
-              children: [
-                TextField(
-                  onChanged: (value) => _runFilter(value),
-                  style: const TextStyle(color: Colors.black87),
-                  decoration: InputDecoration(
-                    hintText: 'Cari berita...',
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(40),
+                bottomRight: Radius.circular(40),
+              ),
             ),
           ),
 
-          // --- List Berita ---
-          Expanded(
-            child: _foundNews.isNotEmpty
-                ? ListView.builder(
-                    padding: const EdgeInsets.only(top: 16, bottom: 100),
-                    itemCount: _foundNews.length,
-                    itemBuilder: (context, index) {
-                      final news = _foundNews[index];
-                      return _buildNewsCard(news);
-                    },
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // --- UPDATE BAGIAN INI (Mengganti Icon dengan Asset Image) ---
-                        Opacity(
-                          opacity: 1, // Sedikit transparan agar menyatu dengan background
-                          child: Image.asset(
-                            'lib/assets/images/error.png', // Sesuai permintaan
-                            width: 150, // Ukuran disesuaikan
-                            height: 150,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Berita tidak ditemukan',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+          // --- 2. DEKORASI ABSTRAK (Circles) ---
+          Positioned(
+            top: -60,
+            right: -40,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 80,
+            left: -20,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+
+          // --- 3. KONTEN UTAMA ---
+          Column(
+            children: [
+              // Spacer untuk AppBar dan Status Bar
+              SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight + 10),
+
+              // --- SEARCH BAR (Floating Style) ---
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    onChanged: (value) => _runFilter(value),
+                    style: const TextStyle(color: Colors.black87),
+                    decoration: InputDecoration(
+                      hintText: 'Cari berita...',
+                      hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                      prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF050542)),
+                      filled: true,
+                      fillColor: Colors.transparent, // Background handle by Container
+                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                      border: InputBorder.none,
                     ),
                   ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // --- LIST BERITA ---
+              Expanded(
+                child: _foundNews.isNotEmpty
+                    ? ListView.builder(
+                        padding: const EdgeInsets.only(top: 0, bottom: 100),
+                        itemCount: _foundNews.length,
+                        itemBuilder: (context, index) {
+                          final news = _foundNews[index];
+                          return _buildNewsCard(news);
+                        },
+                      )
+                    : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Opacity(
+                              opacity: 0.8,
+                              child: Image.asset(
+                                'lib/assets/images/error.png',
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Berita tidak ditemukan',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+            ],
           ),
         ],
       ),
@@ -192,22 +247,22 @@ class _NewsPageState extends State<NewsPage> {
   // 4. Widget Item Berita (Card)
   Widget _buildNewsCard(NewsItem news) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10), // Margin kiri kanan disamakan dengan search bar
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           onTap: () {
             Navigator.push(
               context,
@@ -224,7 +279,7 @@ class _NewsPageState extends State<NewsPage> {
                 Hero(
                   tag: news.title,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     child: Image.network(
                       news.imageUrl,
                       width: 90,
@@ -234,15 +289,14 @@ class _NewsPageState extends State<NewsPage> {
                         return Container(
                           width: 90,
                           height: 90,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image_not_supported,
-                              color: Colors.grey),
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.image_not_supported_rounded, color: Colors.grey),
                         );
                       },
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,38 +309,35 @@ class _NewsPageState extends State<NewsPage> {
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF050542),
+                          height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
                       Text(
                         news.snippet,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: Colors.grey[500],
                           height: 1.3,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Row(
                         children: [
-                          Icon(Icons.calendar_today_rounded,
-                              size: 12, color: Colors.grey[500]),
+                          Icon(Icons.calendar_today_rounded, size: 12, color: Colors.grey[400]),
                           const SizedBox(width: 4),
                           Text(
                             news.date,
-                            style: TextStyle(
-                                fontSize: 11, color: Colors.grey[500]),
+                            style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                           ),
                           const Spacer(),
-                          Icon(Icons.visibility_rounded,
-                              size: 14, color: Colors.grey[500]),
+                          Icon(Icons.visibility_rounded, size: 14, color: Colors.grey[400]),
                           const SizedBox(width: 4),
                           Text(
                             '${news.views}',
-                            style: TextStyle(
-                                fontSize: 11, color: Colors.grey[500]),
+                            style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                           ),
                         ],
                       ),

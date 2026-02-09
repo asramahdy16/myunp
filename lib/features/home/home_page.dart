@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../web/web_page.dart';
 
-// Import halaman berita, detail berita, KRS, dan Wifi
+// Import halaman-halaman fitur
 import '../news/news_page.dart';
 import '../news/news_view_page.dart';
 import '../krs/krs_page.dart';
-import '../wifi/wifi_page.dart'; 
+import '../wifi/wifi_page.dart';
 import '../transkrip/transkrip_page.dart';
+import '../presensi/presensi_page.dart';
 
-// --- 1. CONFIGURATION: PUSAT PENGATURAN WARNA ---
+// --- 1. CONFIGURATION ---
 class AppColors {
   static const Color primary = Color(0xFF050542);
   static const Color sectionBg = Color(0xFFF8F9FD);
@@ -20,7 +21,7 @@ class AppColors {
   static const Color white = Colors.white;
 }
 
-// --- 2. DATA MODEL UNTUK MENU ---
+// --- 2. DATA MODEL ---
 class MenuData {
   final String title;
   final String assetName;
@@ -38,56 +39,61 @@ class MenuData {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  // --- Data Source Menu (Method) ---
+  // --- MENU AKADEMIK ---
   List<MenuData> _getAcademicMenus(BuildContext context) => [
         MenuData(title: 'Evaluasi', assetName: 'lib/assets/icons/evaluasi.png'),
-        MenuData(
-            title: 'Foto Wisuda',
-            assetName: 'lib/assets/icons/foto_wisuda.png'),
+        MenuData(title: 'Foto Wisuda', assetName: 'lib/assets/icons/foto_wisuda.png'),
         
-        // --- MENU KRS ---
+        // KRS Online
         MenuData(
-          title: 'KRS Online', 
+          title: 'KRS Online',
           assetName: 'lib/assets/icons/krs.png',
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const KrsPage()),
             );
-          }
+          },
         ),
 
-        MenuData(title: 'Presensi', assetName: 'lib/assets/icons/presensi.png'),
-        
-        // --- MENU WIFI ID (UPDATED) ---
+        // Presensi
         MenuData(
-            title: 'Password @wifi.id', 
-            assetName: 'lib/assets/icons/wifi_id.png',
-            onTap: () {
-              // Navigasi ke Halaman Wifi Page
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const WifiPage()),
-              );
-            }
+          title: 'Presensi',
+          assetName: 'lib/assets/icons/presensi.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PresensiPage()),
+            );
+          },
         ),
-        // ------------------------------
 
-        // --- UPDATE TOMBOL TRANSKRIP DI SINI ---
+        // Wifi ID
         MenuData(
-            title: 'Transkrip', 
-            assetName: 'lib/assets/icons/historis.png',
-            onTap: () {
-              // Navigasi ke Halaman Transkrip
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TranskripPage()),
-              );
-            }
+          title: 'Password @wifi.id',
+          assetName: 'lib/assets/icons/wifi_id.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const WifiPage()),
+            );
+          },
         ),
-        // ---------------------------------------
+
+        // Transkrip
+        MenuData(
+          title: 'Transkrip',
+          assetName: 'lib/assets/icons/historis.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const TranskripPage()),
+            );
+          },
+        ),
       ];
 
+  // --- MENU WEBSITE ---
   List<MenuData> get _websiteMenus => [
         MenuData(
             title: 'Portal',
@@ -103,7 +109,7 @@ class HomePage extends StatelessWidget {
             url: 'https://rumah-gadang.unp.ac.id/'),
       ];
 
-  // --- Data Source Berita Terbaru (3 Item) ---
+  // --- BERITA TERBARU ---
   List<NewsItem> get _latestNews => [
         NewsItem(
           title: 'Peluncuran Fitur Baru E-Office',
@@ -128,7 +134,7 @@ class HomePage extends StatelessWidget {
         ),
       ];
 
-  // --- Helper Logic ---
+  // --- HELPER NAVIGASI ---
   void _handleNavigation(BuildContext context, MenuData menu) {
     if (menu.onTap != null) {
       menu.onTap!();
@@ -142,12 +148,11 @@ class HomePage extends StatelessWidget {
     }
   }
 
-  // --- UI Builders ---
+  // --- WIDGETS ---
 
-  // 1. WIDGET CARD BERITA
   Widget _buildNewsCard(BuildContext context, NewsItem news) {
     return Container(
-      width: 280, 
+      width: 280,
       margin: const EdgeInsets.only(right: 16, bottom: 10),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -255,7 +260,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 2. WIDGET SECTION BERITA
   Widget _buildLatestNewsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,7 +421,11 @@ class HomePage extends StatelessWidget {
             height: totalHeight - cardMarginTop,
             margin: const EdgeInsets.only(top: cardMarginTop),
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              gradient: const LinearGradient(
+                colors: [Color(0xFF050542), Color(0xFF0A0F6C)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(25),
             ),
             child: Row(
@@ -598,7 +606,6 @@ class HomePage extends StatelessWidget {
                 _buildLatestNewsSection(context),
 
                 const SizedBox(height: 25),
-                // Panggil Menu Akademik dengan Context
                 _buildMenuSection(context, 'Layanan Akademik', _getAcademicMenus(context)),
                 
                 const SizedBox(height: 30),
@@ -615,7 +622,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// --- DELEGATE HEADER (Tetap Sama) ---
+// --- DELEGATE HEADER (UPDATED WITH GRADIENT & SHAPES) ---
 class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight;
   final double maxHeight;
@@ -627,105 +634,164 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final double shrinkPercentage =
         min(1, shrinkOffset / (maxHeight - minHeight));
-    final double logoSize =
-        (50 * (1 - shrinkPercentage)) + (36 * shrinkPercentage);
-    final double nameFontSize =
-        (18 * (1 - shrinkPercentage)) + (16 * shrinkPercentage);
+    
+    // Perhitungan Ukuran Dinamis
+    final double logoSize = (50 * (1 - shrinkPercentage)) + (36 * shrinkPercentage);
+    final double nameFontSize = (18 * (1 - shrinkPercentage)) + (16 * shrinkPercentage);
     final double fadeOpacity = (1 - (shrinkPercentage * 2)).clamp(0.0, 1.0);
 
     return Container(
+      // Clip.hardEdge agar dekorasi tidak keluar dari border radius bawah
+      clipBehavior: Clip.hardEdge, 
       decoration: const BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
-          ]),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: logoSize,
-                height: logoSize,
+        // 1. UPDATE: GRADIENT BACKGROUND
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF050542),
+            Color(0xFF0A0F6C),
+          ],
+        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
+        ]
+      ),
+      child: Stack(
+        children: [
+          // 2. UPDATE: DEKORASI ORNAMEN LINGKARAN
+          // Lingkaran Kanan Atas
+          Positioned(
+            top: -50,
+            right: -30,
+            child: Opacity(
+              opacity: (1 - shrinkPercentage).clamp(0.0, 1.0), // Hilang saat discroll
+              child: Container(
+                width: 180,
+                height: 180,
                 decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
                   shape: BoxShape.circle,
-                  color: AppColors.white,
-                  border: Border.all(
-                      color: AppColors.accent.withOpacity(0.8), width: 2),
-                ),
-                padding: const EdgeInsets.all(2),
-                child: ClipOval(
-                  child: Image.asset('lib/assets/images/logo_unp.png',
-                      fit: BoxFit.cover),
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Asra Mahdy Hayun',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: nameFontSize,
-                        height: 1.2,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (fadeOpacity > 0) ...[
-                      Opacity(
-                        opacity: fadeOpacity,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: const BoxDecoration(
-                                    color: AppColors.accent,
-                                    shape: BoxShape.circle),
-                              ),
-                              const SizedBox(width: 6),
-                              const Expanded(
-                                child: Text(
-                                  'Prodi Pendidikan Teknik Informatika',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ]
-                  ],
+            ),
+          ),
+          
+          // Lingkaran Kiri Bawah
+          Positioned(
+            bottom: -40,
+            left: -20,
+            child: Opacity(
+              opacity: (1 - shrinkPercentage).clamp(0.0, 1.0),
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
+            ),
+          ),
+
+          // 3. KONTEN UTAMA (Foreground)
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _headerIcon(Icons.qr_code_scanner_rounded),
-                  const SizedBox(width: 12),
-                  _headerIcon(Icons.notifications_none_rounded),
+                  // Logo Profil
+                  Container(
+                    width: logoSize,
+                    height: logoSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.white,
+                      border: Border.all(
+                          color: AppColors.accent.withOpacity(0.8), width: 2),
+                    ),
+                    padding: const EdgeInsets.all(2),
+                    child: ClipOval(
+                      child: Image.asset('lib/assets/images/logo_unp.png',
+                          fit: BoxFit.cover),
+                    ),
+                  ),
+                  
+                  const SizedBox(width: 16),
+                  
+                  // Teks Identitas
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Asra Mahdy Hayun',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: nameFontSize,
+                            height: 1.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        
+                        // Subtitle (Hilang saat discroll)
+                        if (fadeOpacity > 0) ...[
+                          Opacity(
+                            opacity: fadeOpacity,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: const BoxDecoration(
+                                        color: AppColors.accent,
+                                        shape: BoxShape.circle),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Expanded(
+                                    child: Text(
+                                      'Prodi Pendidikan Teknik Informatika',
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ]
+                      ],
+                    ),
+                  ),
+                  
+                  // Ikon Notifikasi & QR
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _headerIcon(Icons.qr_code_scanner_rounded),
+                      const SizedBox(width: 12),
+                      _headerIcon(Icons.notifications_none_rounded),
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
