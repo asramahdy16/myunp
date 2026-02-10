@@ -9,6 +9,7 @@ import '../krs/krs_page.dart';
 import '../wifi/wifi_page.dart';
 import '../transkrip/transkrip_page.dart';
 import '../presensi/presensi_page.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 // --- 1. CONFIGURATION ---
 class AppColors {
@@ -42,7 +43,23 @@ class HomePage extends StatelessWidget {
   // --- MENU AKADEMIK ---
   List<MenuData> _getAcademicMenus(BuildContext context) => [
         MenuData(title: 'Evaluasi', assetName: 'lib/assets/icons/evaluasi.png'),
-        MenuData(title: 'Foto Wisuda', assetName: 'lib/assets/icons/foto_wisuda.png'),
+        
+        // --- MENU FOTO WISUDA ---
+        MenuData(
+          title: 'Foto Wisuda', 
+          assetName: 'lib/assets/icons/foto_wisuda.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WebPage(
+                  title: 'Foto Wisuda', 
+                  url: 'https://bayar.unp.ac.id'
+                ),
+              ),
+            );
+          },
+        ),
         
         // KRS Online
         MenuData(
@@ -509,7 +526,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildHelpCenter() {
+  // --- UPDATE: MENAMBAHKAN KONTEKS & NAVIGASI PENGADUAN ---
+  Widget _buildHelpCenter(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -525,9 +543,10 @@ class HomePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          
+          // Container dibungkus Material untuk efek InkWell
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -539,45 +558,66 @@ class HomePage extends StatelessWidget {
                     offset: const Offset(0, 5),
                   )
                 ]),
-            child: Row(
-              children: [
-                Container(
-                  height: 60,
-                  width: 60,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.sectionBg,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Image.asset('lib/assets/icons/pengaduan.png'),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                // 1. Fungsi Navigasi ke Web Pengaduan
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WebPage(
+                        title: 'Layanan Pengaduan',
+                        url: 'https://satgasppks.unp.ac.id/pengaduan/login',
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     children: [
-                      const Text(
-                        "Layanan Pengaduan",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: AppColors.textPrimary,
+                      Container(
+                        height: 60,
+                        width: 60,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.sectionBg,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Image.asset('lib/assets/icons/pengaduan.png'),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Layanan Pengaduan",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Punya masalah akademik? Laporkan disini.",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "Punya masalah akademik? Laporkan disini.",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
+                      Icon(Icons.arrow_forward_ios_rounded,
+                          size: 16, color: Colors.grey[400]),
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded,
-                    size: 16, color: Colors.grey[400]),
-              ],
+              ),
             ),
           ),
         ],
@@ -606,12 +646,16 @@ class HomePage extends StatelessWidget {
                 _buildLatestNewsSection(context),
 
                 const SizedBox(height: 25),
+                // Panggil Menu Akademik dengan Context
                 _buildMenuSection(context, 'Layanan Akademik', _getAcademicMenus(context)),
                 
                 const SizedBox(height: 30),
                 _buildMenuSection(context, 'Website Kampus', _websiteMenus),
+                
                 const SizedBox(height: 30),
-                _buildHelpCenter(),
+                // Mengirimkan context ke fungsi HelpCenter
+                _buildHelpCenter(context), 
+                
                 const SizedBox(height: 120),
               ],
             ),
@@ -622,7 +666,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// --- DELEGATE HEADER (UPDATED WITH GRADIENT & SHAPES) ---
+// --- DELEGATE HEADER (Tetap Sama) ---
 class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight;
   final double maxHeight;

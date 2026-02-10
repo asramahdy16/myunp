@@ -98,17 +98,18 @@ class ProfilePage extends StatelessWidget {
             // --- BAGIAN ATAS (Header Gradient Modern) ---
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.only(bottom: 30),
-              // Clip.hardEdge memastikan ornamen lingkaran tidak keluar dari border radius
-              clipBehavior: Clip.hardEdge, 
+              // UPDATE: Padding bawah diperbesar agar background biru lebih panjang
+              // dan card turun ke bawah tidak menutupi teks
+              padding: const EdgeInsets.only(bottom: 80), 
+              
+              clipBehavior: Clip.hardEdge,
               decoration: const BoxDecoration(
-                // 1. UPDATE: Menggunakan Gradient dari halaman Wifi
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
                     Color(0xFF050542),
-                    Color(0xFF0A0F6C), // Sedikit lebih terang di ujung
+                    Color(0xFF0A0F6C),
                   ],
                 ),
                 borderRadius: BorderRadius.only(
@@ -118,7 +119,7 @@ class ProfilePage extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // 2. UPDATE: Dekorasi Lingkaran Abstrak (Background)
+                  // Dekorasi Lingkaran Abstrak
                   Positioned(
                     top: -50,
                     right: -50,
@@ -144,7 +145,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
 
-                  // 3. KONTEN PROFILE (Foreground)
+                  // KONTEN PROFILE (Foreground)
                   SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
@@ -246,7 +247,7 @@ class ProfilePage extends StatelessWidget {
                           const Text(
                             "Prodi Pendidikan Teknik Informatika",
                             style: TextStyle(
-                              color: Colors.white70, // Sedikit transparan agar elegan
+                              color: Colors.white70,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),

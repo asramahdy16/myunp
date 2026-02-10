@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // Import file page Anda
 import '../home/home_page.dart';
@@ -23,11 +24,11 @@ class _MainPageState extends State<MainPage> {
 
   // Daftar Halaman
   final List<Widget> _pages = const [
-    HomePage(),      // Index 0
-    NewsPage(),      // Index 1
-    EOfficePage(),   // Index 2
-    AgendaPage(),    // Index 3
-    ProfilePage(),   // Index 4
+    HomePage(), // Index 0
+    NewsPage(), // Index 1
+    EOfficePage(), // Index 2
+    AgendaPage(), // Index 3
+    ProfilePage(), // Index 4
   ];
 
   // Fungsi ganti halaman
@@ -41,7 +42,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.grey[50], // Background dasar aplikasi
-      
+
       // 1. ANIMATED BODY SWITCHER (Transisi Halaman Halus)
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
@@ -56,7 +57,7 @@ class _MainPageState extends State<MainPage> {
         },
         child: Container(
           // Key penting agar AnimatedSwitcher tahu widget berubah
-          key: ValueKey<int>(_currentIndex), 
+          key: ValueKey<int>(_currentIndex),
           child: _pages[_currentIndex],
         ),
       ),
@@ -71,17 +72,26 @@ class _MainPageState extends State<MainPage> {
             backgroundColor: _currentIndex == 0 ? primaryColor : Colors.white,
             elevation: 8, // Shadow lebih dalam
             // Mencegah perubahan warna default Material 3
-            // surfaceTintColor: _currentIndex == 0 ? primaryColor : Colors.white, 
-            shape: const CircleBorder(), 
+            // surfaceTintColor: _currentIndex == 0 ? primaryColor : Colors.white,
+            shape: const CircleBorder(),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
-              child: Icon(
-                Icons.home_rounded,
-                // Key agar icon ter-animate saat berubah warna
-                key: ValueKey<bool>(_currentIndex == 0), 
-                size: 30,
-                color: _currentIndex == 0 ? Colors.white : primaryColor,
+              transitionBuilder: (child, anim) =>
+                  ScaleTransition(scale: anim, child: child),
+              child: SvgPicture.asset(
+                'lib/assets/icons/home_unp.svg',
+
+                // Key supaya AnimatedSwitcher tetap bekerja
+                key: ValueKey<bool>(_currentIndex == 0),
+
+                width: 30,
+                height: 30,
+
+                // Warna berubah sesuai aktif/tidak
+                colorFilter: ColorFilter.mode(
+                  _currentIndex == 0 ? Colors.white : primaryColor,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -104,18 +114,18 @@ class _MainPageState extends State<MainPage> {
           children: [
             // KIRI
             _NavBarItem(
-              icon: Icons.newspaper_rounded, 
-              label: "News", 
-              index: 1, 
-              currentIndex: _currentIndex, 
+              icon: Icons.newspaper_rounded,
+              label: "News",
+              index: 1,
+              currentIndex: _currentIndex,
               onTap: _onItemTapped,
               primaryColor: primaryColor,
             ),
             _NavBarItem(
-              icon: Icons.chat_bubble_rounded, 
-              label: "E-Office", 
-              index: 2, 
-              currentIndex: _currentIndex, 
+              icon: Icons.chat_bubble_rounded,
+              label: "E-Office",
+              index: 2,
+              currentIndex: _currentIndex,
               onTap: _onItemTapped,
               primaryColor: primaryColor,
             ),
@@ -125,18 +135,18 @@ class _MainPageState extends State<MainPage> {
 
             // KANAN
             _NavBarItem(
-              icon: Icons.calendar_month_rounded, 
-              label: "Agenda", 
-              index: 3, 
-              currentIndex: _currentIndex, 
+              icon: Icons.calendar_month_rounded,
+              label: "Agenda",
+              index: 3,
+              currentIndex: _currentIndex,
               onTap: _onItemTapped,
               primaryColor: primaryColor,
             ),
             _NavBarItem(
-              icon: Icons.person_rounded, 
-              label: "Profile", 
-              index: 4, 
-              currentIndex: _currentIndex, 
+              icon: Icons.person_rounded,
+              label: "Profile",
+              index: 4,
+              currentIndex: _currentIndex,
               onTap: _onItemTapped,
               primaryColor: primaryColor,
             ),
@@ -189,9 +199,9 @@ class _NavBarItem extends StatelessWidget {
                 size: 26,
               ),
             ),
-            
+
             const SizedBox(height: 4),
-            
+
             // Animasi Text Label
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),

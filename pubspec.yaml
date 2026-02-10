@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   webview_flutter: ^4.4.2 
+  flutter_svg: ^2.0.7
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -77,6 +78,7 @@ flutter:
     - lib/assets/icons/presensi.png
     - lib/assets/icons/task_up.png
     - lib/assets/icons/wifi_id.png
+    - lib/assets/icons/home_unp.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
