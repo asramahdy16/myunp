@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dev_note_page.dart'; // <--- JANGAN LUPA IMPORT INI
+import 'dev_note_page.dart'; 
+import '../web/web_page.dart'; // <--- Pastikan import ini ada
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -21,7 +22,6 @@ class AboutPage extends StatelessWidget {
               // Clip.hardEdge memastikan ornamen lingkaran tidak keluar dari border radius
               clipBehavior: Clip.hardEdge,
               decoration: const BoxDecoration(
-                // 1. UPDATE: Menggunakan Gradient
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -37,7 +37,7 @@ class AboutPage extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // 2. UPDATE: Dekorasi Lingkaran Abstrak (Background)
+                  // Dekorasi Lingkaran Abstrak (Background)
                   Positioned(
                     top: -50,
                     right: -50,
@@ -63,7 +63,7 @@ class AboutPage extends StatelessWidget {
                     ),
                   ),
 
-                  // 3. KONTEN FOREGROUND
+                  // KONTEN FOREGROUND
                   SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
@@ -192,15 +192,38 @@ class AboutPage extends StatelessWidget {
                         },
                       ),
                       
+                      // --- UPDATE: Navigasi Help & Contact ---
                       _buildMenuItem(
                         icon: Icons.help_outline_rounded,
                         text: "Help & Contact",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const WebPage(
+                                title: 'Help & Contact',
+                                url: 'https://dti.unp.ac.id/helpdesk/login',
+                              ),
+                            ),
+                          );
+                        },
                       ),
+
+                      // --- UPDATE: Navigasi About UNP ---
                       _buildMenuItem(
                         icon: Icons.info_outline_rounded,
                         text: "About UNP",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const WebPage(
+                                title: 'About UNP',
+                                url: 'https://unp.ac.id/pages/tentang_sambutan_rektor/',
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       
                       const SizedBox(height: 30),

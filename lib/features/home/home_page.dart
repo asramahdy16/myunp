@@ -9,7 +9,6 @@ import '../krs/krs_page.dart';
 import '../wifi/wifi_page.dart';
 import '../transkrip/transkrip_page.dart';
 import '../presensi/presensi_page.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 
 // --- 1. CONFIGURATION ---
 class AppColors {
@@ -526,7 +525,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // --- UPDATE: MENAMBAHKAN KONTEKS & NAVIGASI PENGADUAN ---
   Widget _buildHelpCenter(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -544,7 +542,6 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           
-          // Container dibungkus Material untuk efek InkWell
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -562,7 +559,6 @@ class HomePage extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
-                // 1. Fungsi Navigasi ke Web Pengaduan
                 onTap: () {
                   Navigator.push(
                     context,
@@ -653,7 +649,6 @@ class HomePage extends StatelessWidget {
                 _buildMenuSection(context, 'Website Kampus', _websiteMenus),
                 
                 const SizedBox(height: 30),
-                // Mengirimkan context ke fungsi HelpCenter
                 _buildHelpCenter(context), 
                 
                 const SizedBox(height: 120),
@@ -666,7 +661,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// --- DELEGATE HEADER (Tetap Sama) ---
+// --- DELEGATE HEADER (UPDATED) ---
 class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight;
   final double maxHeight;
@@ -688,7 +683,7 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
       // Clip.hardEdge agar dekorasi tidak keluar dari border radius bawah
       clipBehavior: Clip.hardEdge, 
       decoration: const BoxDecoration(
-        // 1. UPDATE: GRADIENT BACKGROUND
+        // GRADIENT BACKGROUND
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -705,8 +700,7 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
       ),
       child: Stack(
         children: [
-          // 2. UPDATE: DEKORASI ORNAMEN LINGKARAN
-          // Lingkaran Kanan Atas
+          // DEKORASI ORNAMEN LINGKARAN
           Positioned(
             top: -50,
             right: -30,
@@ -723,7 +717,6 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
           
-          // Lingkaran Kiri Bawah
           Positioned(
             bottom: -40,
             left: -20,
@@ -740,7 +733,7 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
 
-          // 3. KONTEN UTAMA (Foreground)
+          // KONTEN UTAMA (Foreground)
           SafeArea(
             bottom: false,
             child: Padding(
@@ -748,19 +741,18 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Logo Profil
+                  // Logo Profil (UPDATED: Tanpa Border & Padding)
                   Container(
                     width: logoSize,
                     height: logoSize,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppColors.white,
-                      border: Border.all(
-                          color: AppColors.accent.withOpacity(0.8), width: 2),
+                      // BORDER DIHAPUS
                     ),
-                    padding: const EdgeInsets.all(2),
+                    // PADDING DIHAPUS
                     child: ClipOval(
-                      child: Image.asset('lib/assets/images/logo_unp.png',
+                      child: Image.asset('lib/assets/images/profile.png',
                           fit: BoxFit.cover),
                     ),
                   ),
@@ -785,7 +777,7 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                           overflow: TextOverflow.ellipsis,
                         ),
                         
-                        // Subtitle (Hilang saat discroll)
+                        // Subtitle
                         if (fadeOpacity > 0) ...[
                           Opacity(
                             opacity: fadeOpacity,

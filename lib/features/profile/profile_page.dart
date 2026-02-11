@@ -191,7 +191,7 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ],
                               image: const DecorationImage(
-                                image: AssetImage('lib/assets/images/logo_unp.png'),
+                                image: AssetImage('lib/assets/images/profile.png'),
                                 fit: BoxFit.contain,
                               ),
                             ),
