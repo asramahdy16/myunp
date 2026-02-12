@@ -9,6 +9,8 @@ import '../krs/krs_page.dart';
 import '../wifi/wifi_page.dart';
 import '../transkrip/transkrip_page.dart';
 import '../presensi/presensi_page.dart';
+// IMPORT HALAMAN NOTIFIKASI
+import '../notification/notification_page.dart'; // Sesuaikan path jika berbeda
 
 // --- 1. CONFIGURATION ---
 class AppColors {
@@ -642,7 +644,6 @@ class HomePage extends StatelessWidget {
                 _buildLatestNewsSection(context),
 
                 const SizedBox(height: 25),
-                // Panggil Menu Akademik dengan Context
                 _buildMenuSection(context, 'Layanan Akademik', _getAcademicMenus(context)),
                 
                 const SizedBox(height: 30),
@@ -680,10 +681,8 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double fadeOpacity = (1 - (shrinkPercentage * 2)).clamp(0.0, 1.0);
 
     return Container(
-      // Clip.hardEdge agar dekorasi tidak keluar dari border radius bawah
       clipBehavior: Clip.hardEdge, 
       decoration: const BoxDecoration(
-        // GRADIENT BACKGROUND
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -705,7 +704,7 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             top: -50,
             right: -30,
             child: Opacity(
-              opacity: (1 - shrinkPercentage).clamp(0.0, 1.0), // Hilang saat discroll
+              opacity: (1 - shrinkPercentage).clamp(0.0, 1.0), 
               child: Container(
                 width: 180,
                 height: 180,
@@ -741,16 +740,14 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Logo Profil (UPDATED: Tanpa Border & Padding)
+                  // Logo Profil
                   Container(
                     width: logoSize,
                     height: logoSize,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppColors.white,
-                      // BORDER DIHAPUS
                     ),
-                    // PADDING DIHAPUS
                     child: ClipOval(
                       child: Image.asset('lib/assets/images/profile.png',
                           fit: BoxFit.cover),
@@ -820,7 +817,20 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                     children: [
                       _headerIcon(Icons.qr_code_scanner_rounded),
                       const SizedBox(width: 12),
-                      _headerIcon(Icons.notifications_none_rounded),
+                      
+                      // --- TOMBOL NOTIFIKASI YANG DIFUNGSIKAN ---
+                      _headerIcon(
+                        Icons.notifications_none_rounded,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      // ------------------------------------------
                     ],
                   ),
                 ],
@@ -832,14 +842,18 @@ class HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     );
   }
 
-  Widget _headerIcon(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: AppColors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+  // UPDATE: Menambahkan parameter optional onTap
+  Widget _headerIcon(IconData icon, {VoidCallback? onTap}) {
+    return GestureDetector( // Gunakan GestureDetector
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: AppColors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: AppColors.white, size: 22),
       ),
-      child: Icon(icon, color: AppColors.white, size: 22),
     );
   }
 
