@@ -8,7 +8,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _loginController = LoginController();
@@ -16,21 +16,63 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   bool _isLoading = false;
 
-  // Warna Utama (Dark Blue UNP)
-  final Color _primaryColor = const Color(0xFF0A0F6C);
+  // Animation Controller
+  late AnimationController _animController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  // Warna Utama (Dark Blue UNP & Accent Amber)
+  final Color _primaryColor = const Color(0xFF050542);
+  final Color _accentColor = const Color(0xFFFFA726);
+
+  @override
+  void initState() {
+    super.initState();
+    // Setup Animasi
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animController, curve: const Interval(0.0, 0.6, curve: Curves.easeIn)),
+    );
+
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+      CurvedAnimation(parent: _animController, curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic)),
+    );
+
+    _animController.forward();
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _animController.dispose();
+    super.dispose();
+  }
 
   void _handleLogin() async {
+    // Dismiss keyboard
+    FocusScope.of(context).unfocus();
+
     if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Harap isi semua kolom')),
+        SnackBar(
+          content: const Text('Harap isi username dan password'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.redAccent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
       );
       return;
     }
 
     setState(() => _isLoading = true);
 
-    // Simulasi delay login (jika controller aslinya terlalu cepat)
-    // await Future.delayed(const Duration(seconds: 1)); 
+    // Simulasi delay login (Opsional)
+    await Future.delayed(const Duration(milliseconds: 1500)); 
 
     final bool success = await _loginController.login(
       username: _usernameController.text,
@@ -45,9 +87,11 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacementNamed(context, '/main');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Username atau password tidak valid'),
-          backgroundColor: Colors.redAccent,
+        SnackBar(
+          content: const Text('Username atau password salah'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
     }
@@ -55,163 +99,188 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil ukuran layar
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        // SingleChildScrollView agar tidak overflow saat keyboard muncul
-        child: SizedBox(
-          height: size.height,
-          child: Stack(
-            children: [
-              /// 1. BACKGROUND IMAGE & OVERLAY
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: size.height * 0.5, // Gambar hanya setengah layar atas
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      'lib/assets/images/bg_unp.jpg',
-                      fit: BoxFit.cover,
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          /// 1. BACKGROUND HEADER
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: size.height * 0.45, // 45% layar
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Gambar Background
+                Image.asset(
+                  'lib/assets/images/bg_unp.jpg', // Pastikan asset tersedia
+                  fit: BoxFit.cover,
+                ),
+                // Overlay Gradient
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        _primaryColor.withOpacity(0.7),
+                        _primaryColor.withOpacity(0.95),
+                      ],
                     ),
-                    // Overlay gelap agar logo/teks di atasnya terbaca
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            _primaryColor.withOpacity(0.6),
-                            _primaryColor.withOpacity(0.9),
-                          ],
+                  ),
+                ),
+                // Logo & Teks Header
+                Center(
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              )
+                            ]
+                          ),
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundColor: Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset('lib/assets/images/logo_unp.png'),
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 15),
+                        const Text(
+                          "MyUNP",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const Text(
+                          "Universitas Negeri Padang",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
-                    // Logo di tengah atas background
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.2),
-                            ),
-                            child: Image.asset(
-                              'lib/assets/images/logo_unp.png', // Sesuaikan path
-                              width: 80,
-                              height: 80,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            "MyUNP",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          /// 2. FORM CONTAINER (SLIDE UP)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SlideTransition(
+              position: _slideAnimation,
+              child: Container(
+                height: size.height * 0.60, // 60% layar bagian bawah
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 30,
+                      offset: Offset(0, -10),
                     ),
                   ],
                 ),
-              ),
-
-              /// 2. FORM CONTAINER (BOTTOM SHEET STYLE)
-              Positioned(
-                top: size.height * 0.45, // Mulai sedikit di atas tengah
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 20,
-                        offset: Offset(0, -5),
-                      ),
-                    ],
-                  ),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Selamat Datang!",
                         style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                          color: _primaryColor,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Silahkan login untuk melanjutkan",
+                        "Silahkan login untuk mengakses portal.",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
                         ),
                       ),
                       
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 40),
 
-                      /// INPUT USERNAME
+                      // INPUT USERNAME
                       _buildTextField(
                         controller: _usernameController,
-                        label: "Username",
-                        icon: Icons.person_outline,
+                        label: "Username / NIM",
+                        icon: Icons.person_outline_rounded,
                       ),
 
                       const SizedBox(height: 20),
 
-                      /// INPUT PASSWORD
+                      // INPUT PASSWORD
                       _buildTextField(
                         controller: _passwordController,
                         label: "Password",
-                        icon: Icons.lock_outline,
+                        icon: Icons.lock_outline_rounded,
                         isPassword: true,
                       ),
 
-                      // Forgot Password Link (Kanan Bawah)
+                      // Forgot Password
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () {
-                             // Aksi Lupa Password
+                            // Aksi Lupa Password
                           },
                           child: Text(
                             "Lupa Password?",
-                            style: TextStyle(color: _primaryColor),
+                            style: TextStyle(
+                              color: _primaryColor, 
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13
+                            ),
                           ),
                         ),
                       ),
 
-                      const Spacer(),
+                      const SizedBox(height: 30),
 
-                      /// TOMBOL LOGIN
+                      // TOMBOL LOGIN
                       SizedBox(
                         width: double.infinity,
-                        height: 52,
+                        height: 55,
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleLogin,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _primaryColor,
-                            elevation: 2,
+                            foregroundColor: Colors.white,
+                            elevation: 5,
+                            shadowColor: _primaryColor.withOpacity(0.4),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -222,33 +291,41 @@ class _LoginPageState extends State<LoginPage> {
                                   width: 24,
                                   child: CircularProgressIndicator(
                                     color: Colors.white,
-                                    strokeWidth: 2,
+                                    strokeWidth: 2.5,
                                   ),
                                 )
                               : const Text(
-                                  'Masuk',
+                                  'MASUK',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white
+                                    letterSpacing: 1.0,
                                   ),
                                 ),
                         ),
                       ),
                       
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
+                      
+                      // Footer Versi
+                      Center(
+                        child: Text(
+                          "Ver 2.0.1-beta © UPT. DTI UNP",
+                          style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // Widget Helper untuk Input Field agar kode lebih rapi
+  // Helper Widget Custom TextField
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -257,21 +334,30 @@ class _LoginPageState extends State<LoginPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[100], // Warna background input yang soft
+        color: Colors.grey[50],
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
         controller: controller,
         obscureText: isPassword ? _obscurePassword : false,
+        style: TextStyle(color: _primaryColor, fontWeight: FontWeight.w600),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: Colors.grey),
-          prefixIcon: Icon(icon, color: Colors.grey),
+          labelStyle: TextStyle(color: Colors.grey[500], fontSize: 14),
+          prefixIcon: Icon(icon, color: _primaryColor.withOpacity(0.7)),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.grey,
+                    _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    color: Colors.grey[400],
                   ),
                   onPressed: () {
                     setState(() {
@@ -280,8 +366,9 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 )
               : null,
-          border: InputBorder.none, // Menghilangkan border default
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
         ),
       ),
     );

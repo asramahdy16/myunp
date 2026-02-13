@@ -8,14 +8,13 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
+class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   
   // Animations
-  late Animation<double> _logoScale;
-  late Animation<double> _logoOpacity;
-  late Animation<Offset> _slideUp;
-  late Animation<double> _textOpacity;
+  late Animation<double> _logoScaleAnimation;
+  late Animation<double> _contentFadeAnimation;
+  late Animation<Offset> _textSlideAnimation;
 
   @override
   void initState() {
@@ -23,46 +22,41 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2500),
     );
 
-    // 1. Animasi Logo
-    _logoScale = Tween<double>(begin: 0.5, end: 1.0).animate(
+    // 1. Animasi Logo (Membal / Elastic)
+    _logoScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack),
+        curve: const Interval(0.0, 0.6, curve: Curves.elasticOut),
       ),
     );
 
-    _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+    // 2. Animasi Fade
+    _contentFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.4, curve: Curves.easeIn),
+        curve: const Interval(0.5, 1.0, curve: Curves.easeIn),
       ),
     );
 
-    // 2. Animasi Teks (Naik sedikit)
-    _slideUp = Tween<Offset>(
+    // 3. Animasi Slide Teks
+    _textSlideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.5),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.3, 0.8, curve: Curves.easeOutCubic),
-      ),
-    );
-
-    _textOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.3, 0.6, curve: Curves.easeIn),
+        curve: const Interval(0.5, 1.0, curve: Curves.easeOutCubic),
       ),
     );
 
     _controller.forward();
 
-    Timer(const Duration(seconds: 3), () {
-       Navigator.pushReplacementNamed(context, '/main'); 
+    // Navigasi ke halaman Login setelah selesai
+    Timer(const Duration(seconds: 4), () {
+       Navigator.pushReplacementNamed(context, '/login'); 
     });
   }
 
@@ -74,112 +68,135 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF6C63FF); 
+    // Definisi Warna Tema Cerah
+    const Color primaryColor = Color(0xFF050542);
+    const Color accentColor = Color(0xFFFFA726);
+    const Color bgColor = Colors.white;
 
     return Scaffold(
-      // Scaffold background putih sebagai dasar
-      backgroundColor: Colors.white, 
+      backgroundColor: bgColor,
       body: Stack(
-        fit: StackFit.expand, // Memastikan stack mengisi seluruh layar
         children: [
-          /// 1. BACKGROUND GRADIENT (Full Screen)
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.white,
-                  Color(0xFFF5F7FA),
-                ],
-              ),
-            ),
-          ),
-
-          /// 2. DEKORASI (Opsional - Pojok Kanan Atas)
+          // --- 1. DEKORASI BACKGROUND (Abstrak) ---
           Positioned(
-            top: -60,
-            right: -60,
+            top: -100,
+            right: -80,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 350,
+              height: 350,
               decoration: BoxDecoration(
                 color: primaryColor.withOpacity(0.05),
                 shape: BoxShape.circle,
               ),
             ),
           ),
+          Positioned(
+            top: 200,
+            left: -40,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -50,
+            left: -50,
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.03),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
 
-          /// 3. KONTEN UTAMA (LOGO & TEKS) - BENAR-BENAR DI TENGAH (CENTER)
+          // --- 2. KONTEN UTAMA (CENTER) ---
           Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Penting: Agar Column hanya setinggi kontennya
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // LOGO
-                FadeTransition(
-                  opacity: _logoOpacity,
-                  child: ScaleTransition(
-                    scale: _logoScale,
-                    child: Container(
-                      padding: const EdgeInsets.all(15), // Padding agar shadow tidak terpotong
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 30,
-                            offset: const Offset(0, 10),
-                            spreadRadius: 1,
-                          ),
-                        ],
-                      ),
+                // LOGO ANIMATION
+                ScaleTransition(
+                  scale: _logoScaleAnimation,
+                  child: Container(
+                    width: 170,
+                    height: 170,
+                    // HAPUS PADDING DI SINI
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withOpacity(0.15), // Shadow sedikit lebih tegas
+                          blurRadius: 30,
+                          offset: const Offset(0, 15),
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    // Gunakan ClipOval agar gambar terpotong mengikuti bentuk lingkaran
+                    child: ClipOval(
                       child: Image.asset(
                         'lib/assets/images/logo_unp.png',
-                        width: 130, 
-                        height: 130,
+                        fit: BoxFit.cover, // Gambar memenuhi container (Full)
                       ),
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 5), // Jarak antara logo dan teks
 
-                // JUDUL APLIKASI
+                const SizedBox(height: 40),
+
+                // TEKS JUDUL & LOADING
                 FadeTransition(
-                  opacity: _textOpacity,
+                  opacity: _contentFadeAnimation,
                   child: SlideTransition(
-                    position: _slideUp,
+                    position: _textSlideAnimation,
                     child: Column(
                       children: [
                         const Text(
                           "MyUNP",
                           style: TextStyle(
-                            fontSize: 36, // Sedikit diperbesar
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            letterSpacing: 1.1,
+                            fontSize: 42,
+                            fontWeight: FontWeight.w900,
+                            color: primaryColor,
+                            letterSpacing: 1.5,
+                            fontFamily: 'Roboto', 
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          "Ver 2.0.1-beta",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
+                        
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            "v2.1.9-beta",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: primaryColor,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
-                        
-                        const SizedBox(height: 40),
-                        
-                        // LOADING SPINNER
+
+                        const SizedBox(height: 60),
+
+                        // Loading Indicator
                         const SizedBox(
-                          width: 20,
-                          height: 20,
+                          width: 24,
+                          height: 24,
                           child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                            strokeWidth: 3,
+                            color: primaryColor,
+                            backgroundColor: Colors.transparent,
                           ),
                         ),
                       ],
@@ -190,23 +207,29 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
             ),
           ),
 
-          /// 4. VERSION (DI BAGIAN BAWAH LAYAR)
+          // --- 3. FOOTER ---
           Positioned(
-            left: 0,
+            left: 0, 
             right: 0,
-            bottom: 30, // Jarak dari bawah layar
-            child: SafeArea( // Agar aman di HP berponi/gesture bar
-              child: FadeTransition(
-                opacity: _textOpacity,
-                child: const Center(
-                  child: Text(
-                    '©️ DTI UNP 2026',
+            bottom: 30,
+            child: FadeTransition(
+              opacity: _contentFadeAnimation,
+              child: Column(
+                children: [
+                  Text(
+                    'Developed by',
+                    style: TextStyle(color: Colors.grey[400], fontSize: 11),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'DTI UNP © 2026',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
+                      color: primaryColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
