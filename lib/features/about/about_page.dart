@@ -126,7 +126,7 @@ class AboutPage extends StatelessWidget {
                           
                           // 3. Teks Info
                           const Text(
-                            "©️ UPT. DTI UNP 2026",
+                            "©️ DTI UNP 2026",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
